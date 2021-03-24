@@ -9,7 +9,9 @@ export default class Home extends Component {
                 <ScrollView>
                     <ListItem>
                         <ListItem.Content>
-                            <ListItem.Title><Text>Example List Item</Text></ListItem.Title>
+                            <ListItem.Title>
+                                <Text onPress={() => console.log('Make Teams!')}>Example List Item</Text>
+                            </ListItem.Title>
                         </ListItem.Content>
                     </ListItem>
                 </ScrollView>

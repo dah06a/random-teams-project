@@ -1,55 +1,106 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {  createStackNavigator } from '@react-navigation/stack';
+import { Icon } from 'react-native-elements';
 import Home from './Home';
 import Create from './Create';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const Tab = createBottomTabNavigator();
+//blue - 476D6E
+//lightBlue - A9BFB8
+//light - F4E7D2
+//Brown - C99F37
+//Orange - F0730B
 
-function NavigationTabs() {
-  return (
-    <Tab.Navigator
-		initialRouteName="Make Teams"
-		screenOptions={{
-			activeTintColor: 'orange',
-		}}
-    >
-		<Tab.Screen
-			name="Make Teams"
-			component={Home}
-			options={{
-				tabBarLabel: 'Make Teams',
-				tabBarIcon: ({ color, size }) => (
-					<MaterialCommunityIcons name="home" color={'orange'} size={size} />
-				),
-				headerStyle: {
-					backgroundColor: 'orange',
-					height: 100
-				}
-			}}
-		/>
-		<Tab.Screen
-			name="Create"
-			component={Create}
-			options={{
-				tabBarLabel: 'Create',
-				tabBarIcon: ({ color, size }) => (
-					<MaterialCommunityIcons name="home" color={'orange'} size={size} />
-				),			}}
-		/>
-
-    </Tab.Navigator>
-  );
-}
+const Stack = createStackNavigator();
 
 export default class Main extends Component {
     render() {
+
         return (
-            <NavigationContainer>
-                <NavigationTabs />
-            </NavigationContainer>
+			<NavigationContainer>
+				<Stack.Navigator>
+					<Stack.Screen
+						name='Home'
+						component={Home}
+						initialParams={{ navigation: this.props.navigation}}
+						options={ ({ navigation }) =>  ({
+							title: 'Random Teams',
+							headerStyle: {
+								backgroundColor: '#F0730B',
+								height: 100,
+							},
+							headerTintColor: '#F4E7D2',
+							headerTitleStyle: {
+								fontWeight: 'bold',
+								fontStyle: 'italic',
+								fontSize: 24
+							},
+							headerRight: () => (
+								<TouchableOpacity
+									style={{
+										height: 45,
+										width: 45,
+										alignItems: 'center',
+										justifyContent: 'center',
+										backgroundColor: '#C99F37',
+										borderRadius: 50,
+										margin: 5,
+										shadowColor: 'black',
+										shadowOpacity: 0.5,
+										shadowOffset: {
+											width: 2,
+											height: 2,
+										}
+									}}
+									onPress={() => navigation.navigate(Create)}
+								>
+									<Icon name='plus' type='font-awesome' color='#F4E7D2' />
+								</TouchableOpacity>
+							)
+						})}
+					/>
+					<Stack.Screen
+						name="Create"
+						component={Create}
+						options={ ({ navigation }) =>  ({
+							title: 'Create Group',
+							headerStyle: {
+								backgroundColor: '#476D6E',
+								height: 100,
+							},
+							headerTintColor: '#F4E7D2',
+							headerTitleStyle: {
+								fontWeight: 'bold',
+								fontStyle: 'italic',
+								fontSize: 24
+							},
+							headerRight: () => (
+								<TouchableOpacity
+									style={{
+										height: 45,
+										width: 45,
+										alignItems: 'center',
+										justifyContent: 'center',
+										backgroundColor: '#A9BFB8',
+										borderRadius: 50,
+										margin: 5,
+										shadowColor: 'black',
+										shadowOpacity: 0.5,
+										shadowOffset: {
+											width: 2,
+											height: 2,
+										}
+									}}
+									onPress={() => console.log('Create New Group!')}
+								>
+									<Icon name='plus' type='font-awesome' color='#F4E7D2' />
+								</TouchableOpacity>
+							)
+						})}
+					/>
+				</Stack.Navigator>
+			</NavigationContainer>
         );
     }
 }
@@ -58,5 +109,8 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight
-    }
+    },
+	drawerHeader: {
+		margin: 10
+	}
 });
