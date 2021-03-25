@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, FlatList, Text } from 'react-native';
-import { ListItem, Icon, Avatar } from 'react-native-elements';
+import { ListItem, Avatar, Overlay, Button, Icon } from 'react-native-elements';
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
@@ -11,9 +11,13 @@ export default class Create extends Component {
         super(props);
 
         this.state = {
-            group: [
-                { name: '', rank: 1 }
-            ],
+            group: [],
+            member: {
+                id: '',
+                name: '',
+                rank: ''
+            },
+            overlayVisible: false,
             exampleData: [
                 {name: 'David', rank: 3},
                 {name: 'Sarvagya', rank: 3},
@@ -29,7 +33,22 @@ export default class Create extends Component {
 
     render() {
 
-        const customIcon = <Icon name='plus' type='font-awesome' />
+        const memberColor = (rank) => {
+            switch(rank) {
+                case 1:
+                    return 'white';
+                case 2:
+                    return 'yellow';
+                case 3:
+                    return 'green';
+                case 4:
+                    return 'blue';
+                case 5:
+                    return 'red';
+                default:
+                    return 'white';
+            }
+        }
 
         const renderFavoriteItem = ({item}) => {
             return (
@@ -45,11 +64,13 @@ export default class Create extends Component {
                     </View>
 
                     <View>
-                        <ListItem bottomDivider onPress={() => console.log('List Item Pressed')}>
+                        <ListItem bottomDivider onPress={() => console.log('List Item Pressed')} containerStyle={{backgroundColor: '#F4E7D2'}}>
                             <ListItem.Content style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                <Avatar icon={{name: 'user', type: 'font-awesome', color: 'black'}} />
-                                <ListItem.Title style={{fontSize: 24}}>{item.name}</ListItem.Title>
-                                <ListItem.Subtitle>{item.rank}</ListItem.Subtitle>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Avatar icon={{name: 'user-circle', type: 'font-awesome', color: memberColor(item.rank)}} />
+                                    <ListItem.Title style={{fontSize: 24}}>{item.name}</ListItem.Title>
+                                    <ListItem.Subtitle style={{alignSelf: 'center', marginLeft: 20}}>{`Rank: ${item.rank}`}</ListItem.Subtitle>
+                                </View>
                                 <ListItem.Chevron color='black' />
                             </ListItem.Content>
                         </ListItem>
@@ -61,6 +82,41 @@ export default class Create extends Component {
 
         return (
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+
+                <Overlay isVisible={this.state.overlayVisible} onBackdropPress={() => this.setState({overlayVisible: !this.state.overlayVisible})}>
+                    <Text>Hello</Text>
+                </Overlay>
+
+                <View style={{justifyContent: 'center'}}>
+                    <Button
+                        onPress={() => this.setState({overlayVisible: !this.state.overlayVisible})}
+                        title='Add Group Member'
+                        titleStyle={{color: 'black'}}
+                        buttonStyle={{margin: 10, backgroundColor: '#C99F37'}}
+                        icon={
+                            <TouchableOpacity
+                                style={{
+                                    height: 45,
+                                    width: 45,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: '#A9BFB8',
+                                    borderRadius: 50,
+                                    margin: 10,
+                                    shadowColor: 'black',
+                                    shadowOpacity: 0.5,
+                                    shadowOffset: {
+                                        width: 2,
+                                        height: 2,
+                                    }
+                                }}
+                            ><Icon name='user-plus' type='font-awesome' color='#476D6E' />
+                            </TouchableOpacity>
+                        }
+                    />
+
+                </View>
+
                 <Animatable.View animation='fadeInRightBig' duration={500}>
                     <FlatList
                         data={this.state.exampleData}
@@ -68,6 +124,7 @@ export default class Create extends Component {
                         keyExtractor={item => item.name}
                     />
                 </Animatable.View>
+
             </KeyboardAvoidingView>
         );
     }

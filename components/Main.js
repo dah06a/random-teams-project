@@ -45,7 +45,7 @@ export default class Main extends Component {
 										justifyContent: 'center',
 										backgroundColor: '#C99F37',
 										borderRadius: 50,
-										margin: 5,
+										margin: 10,
 										shadowColor: 'black',
 										shadowOpacity: 0.5,
 										shadowOffset: {
@@ -55,7 +55,8 @@ export default class Main extends Component {
 									}}
 									onPress={() => navigation.navigate(Create)}
 								>
-									<Icon name='plus' type='font-awesome' color='#F4E7D2' />
+									<Icon name='plus' type='font-awesome' color='#F4E7D2' size={10} />
+									<Icon name='users' type='font-awesome' color='#F4E7D2' size={20} />
 								</TouchableOpacity>
 							)
 						})}
@@ -75,28 +76,6 @@ export default class Main extends Component {
 								fontStyle: 'italic',
 								fontSize: 24
 							},
-							headerRight: () => (
-								<TouchableOpacity
-									style={{
-										height: 45,
-										width: 45,
-										alignItems: 'center',
-										justifyContent: 'center',
-										backgroundColor: '#A9BFB8',
-										borderRadius: 50,
-										margin: 5,
-										shadowColor: 'black',
-										shadowOpacity: 0.5,
-										shadowOffset: {
-											width: 2,
-											height: 2,
-										}
-									}}
-									onPress={() => console.log('Create New Group!')}
-								>
-									<Icon name='plus' type='font-awesome' color='#F4E7D2' />
-								</TouchableOpacity>
-							)
 						})}
 					/>
 				</Stack.Navigator>
