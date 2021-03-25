@@ -10,7 +10,7 @@ export default class Home extends Component {
                     <ListItem>
                         <ListItem.Content>
                             <ListItem.Title>
-                                <Text onPress={() => console.log('Make Teams!')}>Example List Item</Text>
+                                <Text onPress={() => this.props.navigation.navigate('Create')}>Example List Item</Text>
                             </ListItem.Title>
                         </ListItem.Content>
                     </ListItem>
