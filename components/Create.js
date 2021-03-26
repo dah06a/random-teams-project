@@ -14,6 +14,7 @@ export default class Create extends Component {
 
         this.state = {
             group: [],
+            groupTitle: '',
             newMemberId: '',
             newMemberName: '',
             newMemberRank: 1,
@@ -98,17 +99,17 @@ export default class Create extends Component {
         const memberColor = (rank) => {
             switch(rank) {
                 case 1:
-                    return 'white';
+                    return '#ffe9ce';
                 case 2:
-                    return 'yellow';
+                    return '#FFD97D';
                 case 3:
-                    return 'green';
+                    return '#aaf683';
                 case 4:
-                    return 'blue';
+                    return '#064789';
                 case 5:
-                    return 'red';
+                    return '#ee6055';
                 default:
-                    return 'white';
+                    return 'black';
             }
         }
 
@@ -129,9 +130,9 @@ export default class Create extends Component {
                         <ListItem bottomDivider containerStyle={{backgroundColor: '#A9BFB8'}}>
                             <ListItem.Content style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <View style={{flexDirection: 'row'}}>
-                                    <Avatar icon={{name: 'user-circle', type: 'font-awesome', color: memberColor(item.rank)}} />
-                                    <ListItem.Title style={{fontSize: 24}}>{item.name}</ListItem.Title>
-                                    <ListItem.Subtitle style={{alignSelf: 'center', marginLeft: 20}}>{`Rank: ${item.rank}`}</ListItem.Subtitle>
+                                    <Avatar icon={{name: 'user-circle', type: 'font-awesome', size: 30, color: memberColor(item.rank)}} />
+                                    <ListItem.Title style={{fontSize: 24, marginLeft: 10, alignSelf: 'center'}}>{item.name}</ListItem.Title>
+                                    <ListItem.Subtitle style={{alignSelf: 'center', marginLeft: 10}}>{`Rank: ${item.rank}`}</ListItem.Subtitle>
                                 </View>
                                 <ListItem.Chevron color='black' />
                             </ListItem.Content>
@@ -157,13 +158,15 @@ export default class Create extends Component {
 
                             <Text style={{display: (this.state.errorVisable ? 'flex' : 'none'), fontSize: 12, color: 'red'}}>Must enter name</Text>
                             <Input
-                                placeholder='Name'
+                                label='Name'
+                                placeholder='Enter Name'
                                 leftIcon={<Icon name='user' type='font-awesome' color='#476D6E' style={{paddingRight: 10}} />}
                                 value={this.state.newMemberName}
                                 onChangeText={value => this.setState({newMemberName: value, errorVisable: false })}
                                 onFocus={() => this.setState({pickerVisable: false})}
                             />
                             <Input
+                                label='Rank'
                                 placeholder='Rank'
                                 leftIcon={<Icon name='chevron-up' type='font-awesome' color='#476D6E' style={{paddingRight: 10}} />}
                                 value={this.state.newMemberRank.toString()}
@@ -178,11 +181,11 @@ export default class Create extends Component {
                                 onValueChange={value => this.setState({newMemberRank: value})}
                                 style={{display: (this.state.pickerVisable ? 'flex' : 'none')}}
                             >
-                                <Picker.Item label='1' value={1} />
-                                <Picker.Item label='2' value={2} />
-                                <Picker.Item label='3' value={3} />
-                                <Picker.Item label='4' value={4} />
-                                <Picker.Item label='5' value={5} />
+                                <Picker.Item label='1 - Beginner' value={1} />
+                                <Picker.Item label='2 - Novice' value={2} />
+                                <Picker.Item label='3 - Intermediate' value={3} />
+                                <Picker.Item label='4 - Advanced' value={4} />
+                                <Picker.Item label='5 - Expert' value={5} />
                             </Picker>
 
                             <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
@@ -210,36 +213,57 @@ export default class Create extends Component {
                     </TouchableWithoutFeedback>
                 </Overlay>
 
-                <View style={{flex: 1, justifyContent: 'center'}}>
+                <View
+                    style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'center',
+                        backgroundColor: '#fff',
+                        shadowColor: 'black',
+                        shadowOpacity: 0.5,
+                        shadowOffset: {
+                            width: 2,
+                            height: 2,
+                        }
+                    }}
+                >
+                    <Input
+                        label='Group Title'
+                        placeholder='Enter Title'
+                        containerStyle={{width: '60%'}}
+                        leftIcon={<Icon name='users' type='font-awesome' color='#476D6E' style={{paddingRight: 10}} />}
+                        value={this.state.groupTitle}
+                        onChangeText={value => this.setState({groupTitle: value})}
+                    />
                     <Button
                         onPress={() => {
                             this.setState({updating: false});
                             this.toggleOverlay();
                             this.resetNewMember();
+                            Keyboard.dismiss();
                         }}
                         raised
-                        title='Add New Member'
-                        titleStyle={{color: 'black'}}
+                        title='Add'
+                        titleStyle={{marginLeft: 10, color: 'black'}}
                         buttonStyle={{
-                            margin: 30,
                             backgroundColor: '#C99F37',
-                            shadowColor: 'black',
-                            shadowOpacity: 0.5,
-                            shadowOffset: {
-                                width: 2,
-                                height: 2,
-                            }
+                            width: '100%',
+                            height: '100%'
+                        }}
+                        containerStyle={{
+                            width: '30%',
+                            height: 60,
                         }}
                         icon={
                             <TouchableOpacity
                                 style={{
-                                    height: 45,
-                                    width: 45,
+                                    height: 35,
+                                    width: 35,
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     backgroundColor: '#A9BFB8',
-                                    borderRadius: 50,
-                                    margin: 10,
+                                    borderRadius: 40,
                                 }}
                             ><Icon name='user-plus' type='font-awesome' color='#476D6E' />
                             </TouchableOpacity>
@@ -247,13 +271,44 @@ export default class Create extends Component {
                     />
                 </View>
 
-                <Animatable.View animation='fadeInRightBig' duration={500} style={{flex: 4}}>
+                <Animatable.View animation='fadeInRightBig' duration={500} style={{flex: 3}}>
                     <FlatList
                         data={this.state.group}
                         renderItem={renderMember}
                         keyExtractor={item => item.id}
                     />
                 </Animatable.View>
+
+                <View
+                    style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'center',
+                        backgroundColor: '#fff',
+                        shadowColor: 'black',
+                        shadowOpacity: 0.5,
+                        shadowOffset: {
+                            width: -2,
+                            height: -2,
+                        }
+                    }}>
+                    <Button
+                        title='Cancel'
+                        type='outline'
+                        titleStyle={{color: 'red'}}
+                        buttonStyle={{width: 150, height: '80%', backgroundColor: '#F4E7D2'}}
+                        onPress={() => this.props.navigation.navigate('Home')}
+                    />
+                    <Button
+                        title='Save'
+                        type='outline'
+                        titleStyle={{color: 'green'}}
+                        buttonStyle={{width: 150, height: '80%', backgroundColor: '#A9BFB8'}}
+                        disabled={!this.state.group.length || !this.state.groupTitle.length}
+                        onPress={() => this.props.navigation.navigate('Home', {newMembers: this.state.group, newTitle: this.state.groupTitle})}
+                    />
+                </View>
 
             </KeyboardAvoidingView>
         );

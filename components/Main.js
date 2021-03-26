@@ -5,6 +5,7 @@ import {  createStackNavigator } from '@react-navigation/stack';
 import { Icon } from 'react-native-elements';
 import Home from './Home';
 import Create from './Create';
+import Display from './Display'
 
 //blue - 476D6E
 //lightBlue - A9BFB8
@@ -15,6 +16,20 @@ import Create from './Create';
 const Stack = createStackNavigator();
 
 export default class Main extends Component {
+
+	constructor(props) {
+        super(props);
+
+        this.state = {
+            groups: []
+        }
+    }
+
+    addNewGroup = (newGroup) => {
+        const updatedGroups = this.state.savedGroups.concat(newGroup);
+        this.setState({groups: updatedGroups});
+    }
+
     render() {
 
         return (
@@ -23,12 +38,11 @@ export default class Main extends Component {
 					<Stack.Screen
 						name='Home'
 						component={Home}
-						initialParams={{ navigation: this.props.navigation}}
 						options={ ({ navigation }) =>  ({
 							title: 'Random Teams',
 							headerStyle: {
 								backgroundColor: '#F0730B',
-								height: 100,
+								height: 150,
 							},
 							headerTintColor: '#F4E7D2',
 							headerTitleStyle: {
@@ -64,7 +78,7 @@ export default class Main extends Component {
 					<Stack.Screen
 						name="Create"
 						component={Create}
-						options={ ({ navigation }) =>  ({
+						options={{
 							title: 'Create Group',
 							headerStyle: {
 								backgroundColor: '#476D6E',
@@ -76,7 +90,24 @@ export default class Main extends Component {
 								fontStyle: 'italic',
 								fontSize: 24
 							},
-						})}
+						}}
+					/>
+					<Stack.Screen
+						name="Display"
+						component={Display}
+						options={{
+							title: 'Display Teams',
+							headerStyle: {
+								backgroundColor: '#A9BFB8',
+								height: 100,
+							},
+							headerTintColor: '#F4E7D2',
+							headerTitleStyle: {
+								fontWeight: 'bold',
+								fontStyle: 'italic',
+								fontSize: 24
+							},
+						}}
 					/>
 				</Stack.Navigator>
 			</NavigationContainer>
