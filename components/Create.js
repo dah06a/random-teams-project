@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, KeyboardAvoidingView, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { View, KeyboardAvoidingView, StyleSheet, FlatList, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { ListItem, Avatar, Overlay, Button, Icon, Text, Input } from 'react-native-elements';
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { Picker } from '@react-native-picker/picker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
-import { Keyboard } from 'react-native';
 import { generateId } from '../shared/generateId';
 
 export default class Create extends Component {
@@ -18,8 +17,10 @@ export default class Create extends Component {
             newMemberId: '',
             newMemberName: '',
             newMemberRank: 1,
+            updating: false,
             overlayVisible: false,
             pickerVisable: false,
+            errorVisable: false,
             exampleData: [
                 {name: 'David', rank: 3},
                 {name: 'Sarvagya', rank: 3},
@@ -34,26 +35,54 @@ export default class Create extends Component {
     }
 
     toggleOverlay = () => {
-        this.setState({overlayVisible: !this.state.overlayVisible});
+        this.setState({overlayVisible: !this.state.overlayVisible, pickerVisable: false});
     }
 
-    addNewMember = (name, rank) => {
-        const newId = generateId(10);
-        const newMember = {
-            id: newId,
-            name,
-            rank
+    addNewMember = () => {
+        if (this.state.newMemberName === '') this.setState({errorVisable: true});
+        else {
+            this.setState({errorVisable: false});
+            const newId = generateId(10);
+            const newMember = {
+                id: newId,
+                name: this.state.newMemberName,
+                rank: this.state.newMemberRank
+            }
+            const updatedGroup = this.state.group.concat(newMember);
+            this.setState({group: updatedGroup});
+            this.toggleOverlay();
         }
-        const updatedGroup = this.state.group.concat(newMember);
-        this.setState({group: updatedGroup});
+    }
+
+    saveMember = () => {
+        if (this.state.newMemberName === '') this.setState({errorVisable: true});
+        else {
+            this.setState({errorVisable: false});
+            const updatedGroup = this.state.group.map(member => {
+                if (member.id === this.state.newMemberId) {
+                    const updatedMember = {
+                        id: this.state.newMemberId,
+                        name: this.state.newMemberName,
+                        rank: this.state.newMemberRank
+                    }
+                    return updatedMember;
+                }
+                return member;
+            });
+            this.setState({group: updatedGroup, updating: false});
+            this.toggleOverlay();
+        }
     }
 
     updateMember = (id) => {
-
+        const selectedMember = this.state.group.filter(member => member.id === id)[0];
+        this.setState({newMemberId: selectedMember.id, newMemberName: selectedMember.name, newMemberRank: selectedMember.rank, updating: true});
+        this.toggleOverlay();
     }
 
     deleteMember = (id) => {
-
+        const updatedGroup = this.state.group.filter(member => member.id !== id);
+        this.setState({group: updatedGroup});
     }
 
     resetNewMember = () => {
@@ -85,19 +114,19 @@ export default class Create extends Component {
 
         const renderMember = ({item}) => {
             return (
-                <SwipeRow rightOpenValue={-100} style={styles.swipeRow}>
+                <SwipeRow disableRightSwipe closeOnRowPress rightOpenValue={-200}>
 
-                    <View style={styles.deleteView}>
-                        <TouchableOpacity
-                            style={styles.deleteTouchable}
-                            onPress={() => console.log('Hidden Swipe Button Pressed!') }
-                        >
+                    <View style={styles.swipeView}>
+                        <TouchableOpacity style={styles.editTouchable} onPress={() => this.updateMember(item.id)}>
+                            <Text style={styles.editText}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.deleteTouchable} onPress={() => this.deleteMember(item.id)}>
                             <Text style={styles.deleteText}>Delete</Text>
                         </TouchableOpacity>
                     </View>
 
                     <View>
-                        <ListItem bottomDivider onPress={() => console.log('List Item Pressed')} containerStyle={{backgroundColor: '#F4E7D2'}}>
+                        <ListItem bottomDivider containerStyle={{backgroundColor: '#A9BFB8'}}>
                             <ListItem.Content style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <View style={{flexDirection: 'row'}}>
                                     <Avatar icon={{name: 'user-circle', type: 'font-awesome', color: memberColor(item.rank)}} />
@@ -119,72 +148,88 @@ export default class Create extends Component {
                 <Overlay
                     isVisible={this.state.overlayVisible}
                     onBackdropPress={this.toggleOverlay}
+                    onTouchStart={Keyboard.dismiss}
                 >
-                    <View style={{padding: 10, minHeight: 300}}>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style={{padding: 10, minHeight: 400, minWidth: 300}}>
 
-                        <Text h2>New Group Member</Text>
+                            <Text h2 style={{marginBottom: 20}}>New Group Member</Text>
 
-                        <Input
-                            placeholder='Name'
-                            leftIcon={<Icon name='user' type='font-awesome' color='#476D6E' style={{paddingRight: 10}} />}
-                            value={this.state.newMemberName}
-                            onChangeText={value => this.setState({newMemberName: value })}
-                        />
-                        <Input
-                            placeholder='Rank'
-                            leftIcon={<Icon name='chevron-up' type='font-awesome' color='#476D6E' style={{paddingRight: 10}} />}
-                            value={this.state.newMemberRank.toString()}
-                            onFocus={() => {
-                                Keyboard.dismiss();
-                                this.setState({pickerVisable: !this.state.pickerVisable});
-                            }}
-                        />
-
-                        <Picker
-                            selectedValue={this.state.newMemberRank}
-                            onValueChange={value => this.setState({newMemberRank: value, pickerVisable: !this.state.pickerVisable})}
-                            style={{display: (this.state.pickerVisable ? 'flex' : 'none')}}
-                        >
-                            <Picker.Item label='1' value={1} />
-                            <Picker.Item label='2' value={2} />
-                            <Picker.Item label='3' value={3} />
-                            <Picker.Item label='4' value={4} />
-                            <Picker.Item label='5' value={5} />
-                        </Picker>
-
-                        <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-
-                            <Button
-                                title='Cancel'
-                                type='outline'
-                                titleStyle={{color: 'red'}}
-                                buttonStyle={{width: 100, marginTop: 40}}
-                                onPress={this.toggleOverlay}
+                            <Text style={{display: (this.state.errorVisable ? 'flex' : 'none'), fontSize: 12, color: 'red'}}>Must enter name</Text>
+                            <Input
+                                placeholder='Name'
+                                leftIcon={<Icon name='user' type='font-awesome' color='#476D6E' style={{paddingRight: 10}} />}
+                                value={this.state.newMemberName}
+                                onChangeText={value => this.setState({newMemberName: value, errorVisable: false })}
+                                onFocus={() => this.setState({pickerVisable: false})}
                             />
-
-                            <Button
-                                title='Save'
-                                type='outline'
-                                titleStyle={{color: 'green'}}
-                                buttonStyle={{width: 100, marginTop: 40}}
-                                onPress={() => {
-                                    this.addNewMember(this.state.newMemberName, this.state.newMemberRank);
-                                    this.toggleOverlay();
+                            <Input
+                                placeholder='Rank'
+                                leftIcon={<Icon name='chevron-up' type='font-awesome' color='#476D6E' style={{paddingRight: 10}} />}
+                                value={this.state.newMemberRank.toString()}
+                                onFocus={() => {
+                                    Keyboard.dismiss();
+                                    this.setState({pickerVisable: true});
                                 }}
                             />
+
+                            <Picker
+                                selectedValue={this.state.newMemberRank}
+                                onValueChange={value => this.setState({newMemberRank: value})}
+                                style={{display: (this.state.pickerVisable ? 'flex' : 'none')}}
+                            >
+                                <Picker.Item label='1' value={1} />
+                                <Picker.Item label='2' value={2} />
+                                <Picker.Item label='3' value={3} />
+                                <Picker.Item label='4' value={4} />
+                                <Picker.Item label='5' value={5} />
+                            </Picker>
+
+                            <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+
+                                <Button
+                                    title='Cancel'
+                                    type='outline'
+                                    titleStyle={{color: 'red'}}
+                                    buttonStyle={{width: 100, marginTop: 50}}
+                                    onPress={this.toggleOverlay}
+                                />
+
+                                <Button
+                                    title={this.state.updating ? 'Save' : 'Add'}
+                                    type='outline'
+                                    titleStyle={{color: 'green'}}
+                                    buttonStyle={{width: 100, marginTop: 50}}
+                                    onPress={() => {
+                                        if (this.state.updating) this.saveMember();
+                                        else this.addNewMember();
+                                    }}
+                                />
+                            </View>
                         </View>
-                    </View>
+                    </TouchableWithoutFeedback>
                 </Overlay>
 
-                <View style={{justifyContent: 'center'}}>
+                <View style={{flex: 1, justifyContent: 'center'}}>
                     <Button
                         onPress={() => {
+                            this.setState({updating: false});
                             this.toggleOverlay();
                             this.resetNewMember();
                         }}
-                        title='Add Group Member'
+                        raised
+                        title='Add New Member'
                         titleStyle={{color: 'black'}}
-                        buttonStyle={{margin: 10, backgroundColor: '#C99F37'}}
+                        buttonStyle={{
+                            margin: 30,
+                            backgroundColor: '#C99F37',
+                            shadowColor: 'black',
+                            shadowOpacity: 0.5,
+                            shadowOffset: {
+                                width: 2,
+                                height: 2,
+                            }
+                        }}
                         icon={
                             <TouchableOpacity
                                 style={{
@@ -195,12 +240,6 @@ export default class Create extends Component {
                                     backgroundColor: '#A9BFB8',
                                     borderRadius: 50,
                                     margin: 10,
-                                    shadowColor: 'black',
-                                    shadowOpacity: 0.5,
-                                    shadowOffset: {
-                                        width: 2,
-                                        height: 2,
-                                    }
                                 }}
                             ><Icon name='user-plus' type='font-awesome' color='#476D6E' />
                             </TouchableOpacity>
@@ -208,11 +247,11 @@ export default class Create extends Component {
                     />
                 </View>
 
-                <Animatable.View animation='fadeInRightBig' duration={500}>
+                <Animatable.View animation='fadeInRightBig' duration={500} style={{flex: 4}}>
                     <FlatList
                         data={this.state.group}
                         renderItem={renderMember}
-                        keyExtractor={item => item.name}
+                        keyExtractor={item => item.id}
                     />
                 </Animatable.View>
 
@@ -222,11 +261,23 @@ export default class Create extends Component {
 }
 
 const styles = StyleSheet.create({
-    deleteView: {
+    swipeView: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center',
         flex: 1
+    },
+    editTouchable: {
+        backgroundColor: 'grey',
+        height: '100%',
+        justifyContent: 'center'
+    },
+    editText: {
+        color: 'white',
+        fontWeight: '700',
+        textAlign: 'center',
+        fontSize: 16,
+        width: 100
     },
     deleteTouchable: {
         backgroundColor: 'red',
