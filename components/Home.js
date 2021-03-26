@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, FlatList } from 'react-native';
-import { ListItem, Avatar, Overlay, Button, Icon, Text } from 'react-native-elements';
+import { ListItem, Avatar, Text } from 'react-native-elements';
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
