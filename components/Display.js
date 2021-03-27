@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { Text, Button, Overlay, Input, CheckBox, Icon } from 'react-native-elements'
+import { View, FlatList, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, Button, ListItem, Overlay, Input, CheckBox, Icon } from 'react-native-elements'
 import { Picker } from '@react-native-picker/picker';
 
 export default class Display extends Component {
@@ -78,7 +78,7 @@ export default class Display extends Component {
             let minScore = Math.min(...teamScores);  //Find the lowest team score
             let fairness = maxScore - minScore;
             if (fairness <= teamDiff) {  //If the team scores are within range
-              for (let l = 0; l < teams.length; l++) teams[l].push('Team Rank: ' + teamScores[l].toString());  //Add ranks
+              //for (let l = 0; l < teams.length; l++) teams[l].push('Team Rank: ' + teamScores[l].toString());  //Add ranks
               return [teams, fairness];  //And then return everything!
             }
           }
@@ -88,7 +88,16 @@ export default class Display extends Component {
 
     render() {
 
-        console.log('From the state:', this.state);
+        const currentTeams = this.makeTeams(this.state.selectedGroup, this.state.numOfTeams, this.state.evenTeams, this.state.thoroughness);
+
+
+        const renderTeam = ({ item }) => {
+            <View style={{width: 50, backgroundColor: '#fff'}}>
+                <Text style={{color: 'black'}}>{item.name}</Text>
+            </View>
+        }
+
+        console.log('#####!!!!!#####', currentTeams[0]);
         return (
             <View style={{flex: 1}}>
 
@@ -135,34 +144,40 @@ export default class Display extends Component {
 
                 </Overlay>
 
-                <View style={{flex: 3}}>
-                    <ScrollView>
-                        <Text>Display</Text>
-                    </ScrollView>
+                <View style={{flex: 3, flexDirection: 'row'}}>
+                    <View style={{flex: 1}}>
+                        <Text>Team 1</Text>
+                        <Text>{JSON.stringify(currentTeams[0][0])}</Text>
+                    </View>
+
+                    <View style={{flex: 1}}>
+                        <Text>Team</Text>
+                        <Text>{JSON.stringify(currentTeams[0][1])}</Text>
+                    </View>
                 </View>
 
                 <View style={{flex: 1, backgroundColor: '#A9BFB8'}}>
-                <View
-                    style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        justifyContent: 'space-evenly',
-                        alignItems: 'center',
-                    }}>
-                    <Button
-                        title='Set Options'
-                        type='outline'
-                        titleStyle={{color: '#476D6E'}}
-                        buttonStyle={{width: 150, height: '60%', backgroundColor: '#F4E7D2'}}
-                        onPress={this.toggleOverlay}
-                    />
-                    <Button
-                        title='Make Teams!'
-                        type='outline'
-                        titleStyle={{color: 'white'}}
-                        buttonStyle={{width: 150, height: '60%', backgroundColor: '#476D6E'}}
-                    />
-                </View>
+                    <View
+                        style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'space-evenly',
+                            alignItems: 'center',
+                        }}>
+                        <Button
+                            title='Set Options'
+                            type='outline'
+                            titleStyle={{color: '#476D6E'}}
+                            buttonStyle={{width: 150, height: '60%', backgroundColor: '#F4E7D2'}}
+                            onPress={this.toggleOverlay}
+                        />
+                        <Button
+                            title='Make Teams!'
+                            type='outline'
+                            titleStyle={{color: 'white'}}
+                            buttonStyle={{width: 150, height: '60%', backgroundColor: '#476D6E'}}
+                        />
+                    </View>
                 </View>
             </View>
         );
