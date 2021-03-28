@@ -6,6 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
 import { generateId } from '../shared/generateId';
+import { getMemberColor } from '../shared/getMemberColor';
 
 export default class Create extends Component {
 
@@ -96,23 +97,6 @@ export default class Create extends Component {
 
     render() {
 
-        const memberColor = (rank) => {
-            switch(rank) {
-                case 1:
-                    return '#ffe9ce';
-                case 2:
-                    return '#FFD97D';
-                case 3:
-                    return '#aaf683';
-                case 4:
-                    return '#064789';
-                case 5:
-                    return '#ee6055';
-                default:
-                    return 'black';
-            }
-        }
-
         const renderMember = ({item}) => {
             return (
                 <SwipeRow disableRightSwipe closeOnRowPress rightOpenValue={-200}>
@@ -130,7 +114,7 @@ export default class Create extends Component {
                         <ListItem bottomDivider containerStyle={{backgroundColor: '#A9BFB8'}}>
                             <ListItem.Content style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <View style={{flexDirection: 'row'}}>
-                                    <Avatar icon={{name: 'user-circle', type: 'font-awesome', size: 30, color: memberColor(item.rank)}} />
+                                    <Avatar icon={{name: 'user-circle', type: 'font-awesome', size: 30, color: getMemberColor(item.rank)}} />
                                     <ListItem.Title style={{fontSize: 24, marginLeft: 10, alignSelf: 'center'}}>{item.name}</ListItem.Title>
                                     <ListItem.Subtitle style={{alignSelf: 'center', marginLeft: 10}}>{`Rank: ${item.rank}`}</ListItem.Subtitle>
                                 </View>

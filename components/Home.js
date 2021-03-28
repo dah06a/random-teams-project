@@ -36,6 +36,56 @@ export default class Home extends Component {
                             id: '4',
                             name: 'Daniel',
                             rank: 3
+                        },
+                        {
+                            id: '5',
+                            name: 'Jeff',
+                            rank: 4
+                        },
+                        {
+                            id: '6',
+                            name: 'Josh',
+                            rank: 5
+                        },
+                        {
+                            id: '7',
+                            name: 'Tom',
+                            rank: 2
+                        },
+                        {
+                            id: '8',
+                            name: 'Nigel',
+                            rank: 1
+                        },
+                        {
+                            id: '9',
+                            name: 'Martha',
+                            rank: 1
+                        },
+                        {
+                            id: '10',
+                            name: 'Kathy',
+                            rank: 2
+                        },
+                        {
+                            id: '11',
+                            name: 'Ian',
+                            rank: 2
+                        },
+                        {
+                            id: '12',
+                            name: 'Chadly',
+                            rank: 1
+                        },
+                        {
+                            id: '13',
+                            name: 'Erin',
+                            rank: 4
+                        },
+                        {
+                            id: '14',
+                            name: 'Brielle',
+                            rank: 5
                         }
                     ]
                 }
