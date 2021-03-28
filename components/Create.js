@@ -36,6 +36,13 @@ export default class Create extends Component {
         }
     }
 
+    componentDidMount() {
+        const groupToEdit = this.props.route.params?.selectedGroup;
+        if (groupToEdit) {
+            this.setState({group: groupToEdit.members, groupTitle: groupToEdit.title, })
+        }
+    }
+
     toggleOverlay = () => {
         this.setState({overlayVisible: !this.state.overlayVisible, pickerVisable: false});
     }
@@ -290,7 +297,11 @@ export default class Create extends Component {
                         titleStyle={{color: 'green'}}
                         buttonStyle={{width: 150, height: '80%', backgroundColor: '#A9BFB8'}}
                         disabled={!this.state.group.length || !this.state.groupTitle.length}
-                        onPress={() => this.props.navigation.navigate('Home', {newMembers: this.state.group, newTitle: this.state.groupTitle})}
+                        onPress={() => this.props.navigation.navigate('Home', {
+                            newMembers: this.state.group,
+                            newTitle: this.state.groupTitle,
+                            editId: this.props.route.params?.selectedGroup.id
+                        })}
                     />
                 </View>
 

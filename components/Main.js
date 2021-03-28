@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {  createStackNavigator } from '@react-navigation/stack';
-import { Icon } from 'react-native-elements';
+import { Icon, Button } from 'react-native-elements';
 import Home from './Home';
 import Create from './Create';
 import Display from './Display'
@@ -51,27 +51,22 @@ export default class Main extends Component {
 								fontSize: 24
 							},
 							headerRight: () => (
-								<TouchableOpacity
-									style={{
-										height: 45,
-										width: 45,
+								<Button
+									raised
+									iconRight
+									title='New +'
+									icon={<Icon name='users' type='font-awesome' color='white' size={20} />}
+									onPress={() => navigation.navigate(Create)}
+									titleStyle={{fontSize: 14}}
+									buttonStyle={{
+										backgroundColor: '#C99F37',
+									}}
+									containerStyle={{
 										alignItems: 'center',
 										justifyContent: 'center',
-										backgroundColor: '#C99F37',
-										borderRadius: 50,
 										margin: 10,
-										shadowColor: 'black',
-										shadowOpacity: 0.5,
-										shadowOffset: {
-											width: 2,
-											height: 2,
-										}
 									}}
-									onPress={() => navigation.navigate(Create)}
-								>
-									<Icon name='plus' type='font-awesome' color='#F4E7D2' size={10} />
-									<Icon name='users' type='font-awesome' color='#F4E7D2' size={20} />
-								</TouchableOpacity>
+								/>
 							)
 						})}
 					/>

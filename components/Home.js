@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, KeyboardAvoidingView, StyleSheet, FlatList } from 'react-native';
-import { ListItem, Avatar, Text } from 'react-native-elements';
+import { View, KeyboardAvoidingView, StyleSheet, FlatList, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { ListItem, Avatar, Text, Overlay, Button } from 'react-native-elements';
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
@@ -14,7 +14,7 @@ export default class Home extends Component {
         this.state = {
             groups: [
                 {
-                    id: '11111',
+                    id: '00000',
                     title: 'Example Group',
                     members: [
                         {
@@ -89,7 +89,9 @@ export default class Home extends Component {
                         }
                     ]
                 }
-            ]
+            ],
+            selectedGroup: {},
+            overlayVisible: false
         }
     }
 
@@ -103,13 +105,42 @@ export default class Home extends Component {
         this.setState({groups: updatedGroups});
     }
 
+    editGroup = (groupId) => {
+        const groupToEdit = this.state.groups.filter(group => group.id === groupId)[0];
+        this.props.navigation.navigate('Create', {selectedGroup: groupToEdit});
+    }
+
+    updateGroup = (groupId) => {
+        const updatedGroups = this.state.groups.map(group => {
+            if (group.id === groupId) {
+                group.title = this.props.route.params.newTitle;
+                group.members = this.props.route.params.newMembers;
+            }
+            return group;
+        });
+        this.setState({groups: updatedGroups});
+    }
+
+    askDeleteGroup = (groupId) => {
+        const groupToDelete = this.state.groups.filter(group => group.id === groupId)[0];
+        this.setState({selectedGroup: groupToDelete, overlayVisible: true});
+    }
+
+    deleteGroup = (groupId) => {
+        const updatedGroups = this.state.groups.filter(group => group.id !== groupId);
+        this.setState({groups: updatedGroups, overlayVisible: false});
+    }
+
     componentDidUpdate(prevProps) {
-        if (prevProps.route.params?.newMembers !== this.props.route.params?.newMembers) {
+        if (this.props.route.params?.editId !== this.props.route.params?.editId) {
+            this.updateGroup(this.props.route.params.editId);
+        } else if (prevProps.route.params?.newMembers !== this.props.route.params?.newMembers) {
             this.addNewGroup(this.props.route.params?.newTitle, this.props.route.params?.newMembers);
         }
     }
 
     render() {
+        console.log(this.state.selectedGroup);
 
         const renderGroups = ({item}) => {
             return (
@@ -117,11 +148,11 @@ export default class Home extends Component {
 
                     <View style={styles.swipeView}>
 
-                        <TouchableOpacity style={styles.editTouchable}>
+                        <TouchableOpacity style={styles.editTouchable} onPress={() => this.editGroup(item.id)}>
                             <Text style={styles.editText}>Edit</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.deleteTouchable}>
+                        <TouchableOpacity style={styles.deleteTouchable} onPress={() => this.askDeleteGroup(item.id)}>
                             <Text style={styles.deleteText}>Delete</Text>
                         </TouchableOpacity>
                     </View>
@@ -150,13 +181,44 @@ export default class Home extends Component {
         return (
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
 
-            <Animatable.View animation='fadeInRightBig' duration={500} style={{flex: 4}}>
-                <FlatList
-                    data={this.state.groups}
-                    renderItem={renderGroups}
-                    keyExtractor={item => item.id}
-                />
-            </Animatable.View>
+                <Overlay
+                    isVisible={this.state.overlayVisible}
+                    onBackdropPress={() => this.setState({overlayVisible: false, selectedGroup: {}})}
+                >
+                    <TouchableWithoutFeedback >
+                        <View style={{padding: 10, minHeight: 400, minWidth: 300, justifyContent: 'center', alignItems: 'center'}}>
+
+                            <Text h2 style={{flex: 1, marginBottom: 20}}>Delete Group</Text>
+                            <Text h4 style={{flex: 1}}>Are you sure you want to delete</Text>
+                            <Text h3 style={{flex: 1}}>{this.state.selectedGroup.title} ?</Text>
+
+                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-evenly'}}>
+                                <Button
+                                    title='Cancel'
+                                    style={{width: 100, marginHorizontal: 20}}
+                                    onPress={() => this.setState({overlayVisible: false, selectedGroup: {} })}
+                                />
+                                <Button
+                                    title='Delete'
+                                    style={{width: 100, marginHorizontal: 20}}
+                                    buttonStyle={{backgroundColor: 'red'}}
+                                    onPress={() => this.deleteGroup(this.state.selectedGroup.id)}
+                                />
+                            </View>
+
+                        </View>
+                    </TouchableWithoutFeedback>
+
+                </Overlay>
+
+
+                <Animatable.View animation='fadeInRightBig' duration={500} style={{flex: 4}}>
+                    <FlatList
+                        data={this.state.groups}
+                        renderItem={renderGroups}
+                        keyExtractor={item => item.id}
+                    />
+                </Animatable.View>
             </KeyboardAvoidingView>
         );
     }
