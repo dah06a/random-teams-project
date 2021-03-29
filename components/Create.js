@@ -15,6 +15,7 @@ export default class Create extends Component {
 
         this.state = {
             group: [],
+            groupEditId: '',
             groupTitle: '',
             newMemberId: '',
             newMemberName: '',
@@ -38,8 +39,9 @@ export default class Create extends Component {
 
     componentDidMount() {
         const groupToEdit = this.props.route.params?.selectedGroup;
+        console.log(groupToEdit);
         if (groupToEdit) {
-            this.setState({group: groupToEdit.members, groupTitle: groupToEdit.title, })
+            this.setState({groupEditId: groupToEdit.id, groupTitle: groupToEdit.title, group: groupToEdit.members})
         }
     }
 
@@ -300,7 +302,7 @@ export default class Create extends Component {
                         onPress={() => this.props.navigation.navigate('Home', {
                             newMembers: this.state.group,
                             newTitle: this.state.groupTitle,
-                            editId: this.props.route.params?.selectedGroup.id
+                            editId: this.state.groupEditId ? this.state.groupEditId : null
                         })}
                     />
                 </View>

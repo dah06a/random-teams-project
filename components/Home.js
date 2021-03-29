@@ -132,7 +132,7 @@ export default class Home extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.route.params?.editId !== this.props.route.params?.editId) {
+        if (prevProps.route.params?.editId !== this.props.route.params?.editId) {
             this.updateGroup(this.props.route.params.editId);
         } else if (prevProps.route.params?.newMembers !== this.props.route.params?.newMembers) {
             this.addNewGroup(this.props.route.params?.newTitle, this.props.route.params?.newMembers);
@@ -140,7 +140,6 @@ export default class Home extends Component {
     }
 
     render() {
-        console.log(this.state.selectedGroup);
 
         const renderGroups = ({item}) => {
             return (
