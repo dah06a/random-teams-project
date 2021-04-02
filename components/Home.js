@@ -95,11 +95,27 @@ export default class Home extends Component {
         }
     }
 
-    addNewGroup = (newTitle, newMembers) => {
+    componentDidUpdate(prevProps) {
+
+        if (prevProps.route.params !== this.props.route.params) {
+            if (this.props.route.params?.didEdit) this.updateGroup(this.props.route.params.newId);
+            else this.addNewGroup(this.props.route.params?.newId, this.props.route.params?.newTitle, this.props.route.params?.newMembers);
+        }
+
+        // if (prevProps.route.params?.didEdit !== this.props.route.params?.didEdit) {
+        //     console.log('UPDATING');
+        //     if (this.props.route.params?.didEdit) this.updateGroup(this.props.route.params.newId);
+        // } else if (prevProps.route.params?.newMembers !== this.props.route.params?.newMembers) {
+        //     console.log('ADDING');
+        //     this.addNewGroup(this.props.route.params?.newId, this.props.route.params?.newTitle, this.props.route.params?.newMembers);
+        // }
+    }
+
+    addNewGroup = (id, title, members) => {
         const newGroup = {
-            id: generateId(5),
-            title: newTitle,
-            members: newMembers
+            id,
+            title,
+            members
         }
         const updatedGroups = this.state.groups.concat(newGroup);
         this.setState({groups: updatedGroups});
@@ -107,7 +123,7 @@ export default class Home extends Component {
 
     editGroup = (groupId) => {
         const groupToEdit = this.state.groups.filter(group => group.id === groupId)[0];
-        this.props.navigation.navigate('Create', {selectedGroup: groupToEdit});
+        this.props.navigation.navigate('Create', {selectedGroup: groupToEdit, editing: true});
     }
 
     updateGroup = (groupId) => {
@@ -129,14 +145,6 @@ export default class Home extends Component {
     deleteGroup = (groupId) => {
         const updatedGroups = this.state.groups.filter(group => group.id !== groupId);
         this.setState({groups: updatedGroups, overlayVisible: false});
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.route.params?.editId !== this.props.route.params?.editId) {
-            this.updateGroup(this.props.route.params.editId);
-        } else if (prevProps.route.params?.newMembers !== this.props.route.params?.newMembers) {
-            this.addNewGroup(this.props.route.params?.newTitle, this.props.route.params?.newMembers);
-        }
     }
 
     render() {

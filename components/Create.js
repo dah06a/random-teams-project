@@ -15,15 +15,19 @@ export default class Create extends Component {
 
         this.state = {
             group: [],
-            groupEditId: '',
             groupTitle: '',
+
             newMemberId: '',
             newMemberName: '',
             newMemberRank: 1,
-            updating: false,
+
+            editing: false,
+            groupEditId: '',
+
             overlayVisible: false,
             pickerVisable: false,
             errorVisable: false,
+
             exampleData: [
                 {name: 'David', rank: 3},
                 {name: 'Sarvagya', rank: 3},
@@ -38,10 +42,11 @@ export default class Create extends Component {
     }
 
     componentDidMount() {
-        const groupToEdit = this.props.route.params?.selectedGroup;
-        console.log(groupToEdit);
-        if (groupToEdit) {
-            this.setState({groupEditId: groupToEdit.id, groupTitle: groupToEdit.title, group: groupToEdit.members})
+        const isEditing = this.props.route.params?.editing;
+
+        if (isEditing) {
+            const groupToEdit = this.props.route.params?.selectedGroup;
+            this.setState({groupEditId: groupToEdit.id, groupTitle: groupToEdit.title, group: groupToEdit.members, editing: isEditing})
         }
     }
 
@@ -101,6 +106,38 @@ export default class Create extends Component {
             newMemberId: '',
             newMemberName: '',
             newMemberRank: 1
+        });
+    }
+
+    saveGroup = () => {
+        const groupId = this.state.editing ? this.state.groupEditId : generateId(10);
+        this.props.navigation.navigate('Home', {
+            newId: groupId,
+            newTitle: this.state.groupTitle,
+            newMembers: this.state.group,
+            didEdit: this.state.editing
+        })
+    }
+
+    cancelGroup = () => {
+
+    }
+
+    resetComponent = () => {
+        this.setState({
+            group: [],
+            groupTitle: '',
+
+            newMemberId: '',
+            newMemberName: '',
+            newMemberRank: 1,
+
+            editing: false,
+            groupEditId: '',
+
+            overlayVisible: false,
+            pickerVisable: false,
+            errorVisable: false,
         });
     }
 
@@ -291,7 +328,7 @@ export default class Create extends Component {
                         type='outline'
                         titleStyle={{color: 'red'}}
                         buttonStyle={{width: 150, height: '80%', backgroundColor: '#F4E7D2'}}
-                        onPress={() => this.props.navigation.navigate('Home')}
+                        onPress={() => this.props.navigation.goBack()}
                     />
                     <Button
                         title='Save'
@@ -299,11 +336,7 @@ export default class Create extends Component {
                         titleStyle={{color: 'green'}}
                         buttonStyle={{width: 150, height: '80%', backgroundColor: '#A9BFB8'}}
                         disabled={!this.state.group.length || !this.state.groupTitle.length}
-                        onPress={() => this.props.navigation.navigate('Home', {
-                            newMembers: this.state.group,
-                            newTitle: this.state.groupTitle,
-                            editId: this.state.groupEditId ? this.state.groupEditId : null
-                        })}
+                        onPress={this.saveGroup}
                     />
                 </View>
 

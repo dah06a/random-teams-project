@@ -56,7 +56,7 @@ export default class Main extends Component {
 									iconRight
 									title='New +'
 									icon={<Icon name='users' type='font-awesome' color='white' size={20} />}
-									onPress={() => navigation.navigate(Create)}
+									onPress={() => navigation.navigate(Create, {editing: false})}
 									titleStyle={{fontSize: 14}}
 									buttonStyle={{
 										backgroundColor: '#C99F37',
